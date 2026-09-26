@@ -12,6 +12,10 @@ or raid chat, and every bot in your group hands you the cloth in its bags.
   cloth for you. Make room and say `cloth` again.
 - **The keyword has to be the whole message.** `cloth` works. `anyone got cloth?` does nothing.
   Capitals and extra spaces don't matter.
+- **The keyword itself doesn't show up in chat.** Otherwise mod-playerbots would read it too, and
+  with `AiPlayerbot.EnableAutoTradeOnItemMention` on (its default) every bot would whisper you its
+  cloth count and open a trade window. When nobody in the group is a bot, the message goes through
+  as normal.
 
 Other trade goods can have their own keyword: `leather`, `ore` (metal and stone), `meat`, `herb`,
 `elemental` and `enchanting` (dusts, essences, shards). They're off by default. Turn them on in
@@ -44,6 +48,15 @@ Re-run CMake, rebuild the worldserver, and copy `conf/mod_bot_shakedown.conf.dis
 
 It doesn't change mod-playerbots and doesn't need its headers. It recognizes bots by the
 `WorldSession::IsBot()` that the playerbots core fork adds.
+
+To check that it's loaded, look for this line in the worldserver log at startup:
+
+```
+mod-bot-shakedown: enabled, keywords: cloth
+```
+
+If it's missing, the module isn't in the build. Re-run CMake so it picks up the new folder, then
+rebuild. With the Docker setup, rebuild the images rather than just restarting the containers.
 
 ## Configuration
 

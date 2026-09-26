@@ -215,7 +215,8 @@ namespace
         return result;
     }
 
-    void HandleRequest(Player* receiver, Group* group, std::string const& keyword, uint32 subClass)
+    // Returns false when the group has no bot on the receiver's map, so there was nobody to ask.
+    bool HandleRequest(Player* receiver, Group* group, std::string const& keyword, uint32 subClass)
     {
         ChatHandler chat(receiver->GetSession());
         bool anyBot = false;
@@ -264,8 +265,16 @@ namespace
             }
         }
 
-        if (anyBot && !anyGiven && !bagsFull)
+        if (!anyBot)
+        {
+            chat.PSendSysMessage("There are no bots in your group here to hand over their {}.", keyword);
+            return false;
+        }
+
+        if (!anyGiven && !bagsFull)
             chat.PSendSysMessage("None of your bots have any {}.", keyword);
+
+        return true;
     }
 }
 
@@ -293,6 +302,13 @@ public:
 
             config.keywords.insert(*itr);
         }
+
+        std::string active;
+        for (auto const& [name, subClass] : config.keywords)
+            active += (active.empty() ? "" : " ") + name;
+
+        LOG_INFO("server.loading", "mod-bot-shakedown: {}, keywords: {}", config.enabled ? "enabled" : "disabled",
+            active.empty() ? "none" : active);
     }
 };
 
@@ -311,10 +327,10 @@ public:
         if (itr == config.keywords.end())
             return true;
 
-        HandleRequest(player, group, keyword, itr->second);
-
-        // Let the message through, so the rest of the group still sees it.
-        return true;
+        // Swallow the keyword once the bots have been asked. Otherwise mod-playerbots also reads it
+        // (AiPlayerbot.EnableAutoTradeOnItemMention) and every bot whispers its count and opens a
+        // trade window. This module loads before mod-playerbots, so its hook runs first.
+        return !HandleRequest(player, group, keyword, itr->second);
     }
 };
 
