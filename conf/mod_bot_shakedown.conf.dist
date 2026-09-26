@@ -1,0 +1,28 @@
+[worldserver]
+
+########################################
+# mod-bot-shakedown
+#
+# Say a keyword such as "cloth" in party or raid chat and every playerbot in your group on the
+# same map moves its matching trade goods straight into your bags. No trade windows.
+########################################
+
+#
+#    BotShakedown.Enable
+#        Description: Master switch.
+#        Default:     1
+#
+
+BotShakedown.Enable = 1
+
+#
+#    BotShakedown.Keywords
+#        Description: Space-separated keywords that trigger a hand-over. The whole chat message
+#                     must be the keyword. Each one hands over one kind of trade goods:
+#                         cloth, leather, ore (metal and stone), meat, herb, elemental,
+#                         enchanting (dusts, essences, shards)
+#        Example:     "cloth leather herb ore"
+#        Default:     "cloth"
+#
+
+BotShakedown.Keywords = "cloth"
