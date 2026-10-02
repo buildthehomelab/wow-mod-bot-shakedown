@@ -46,8 +46,8 @@ git clone https://github.com/buildthehomelab/wow-mod-bot-shakedown.git mod-bot-s
 Re-run CMake, rebuild the worldserver, and copy `conf/mod_bot_shakedown.conf.dist` to
 `mod_bot_shakedown.conf` in your config directory. The module needs no SQL.
 
-It doesn't change mod-playerbots and doesn't need its headers. It recognizes bots by the
-`WorldSession::IsBot()` that the playerbots core fork adds.
+It doesn't change mod-playerbots and doesn't need its headers. It recognizes bots as headless
+sessions (`WorldSession::IsHeadless()`), or by `WorldSession::IsBot()` on older playerbots cores.
 
 To check that it's loaded, look for this line in the worldserver log at startup:
 
